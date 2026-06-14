@@ -1,0 +1,67 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+data = {
+    "EmployeeID":[101,102,103,104,104,105,106,107],
+    "Name":["John","Alice","Bob",None,None,"David","Emma","Chris"],
+    "Department":["HR","IT","IT","Finance","Finance","HR","IT",None],
+    "Salary":[50000,60000,None,55000,55000,52000,62000,58000]
+}
+
+df = pd.DataFrame(data)
+
+print("Original Dataset")
+display(df)
+
+df["Name"] = df["Name"].fillna("Unknown")
+df["Department"] = df["Department"].fillna("Not Assigned")
+df["Salary"] = df["Salary"].fillna(df["Salary"].mean())
+
+df = df.drop_duplicates()
+
+print("Cleaned Dataset")
+display(df)
+
+report = pd.DataFrame({
+    "Metric":[
+        "Total Records",
+        "Total Columns",
+        "Missing Values",
+        "Average Salary"
+    ],
+    "Value":[
+        len(df),
+        len(df.columns),
+        df.isnull().sum().sum(),
+        round(df["Salary"].mean(),2)
+    ]
+})
+
+print("Automated Report")
+display(report)
+
+department_summary = (
+    df.groupby("Department")["Salary"]
+    .mean()
+    .reset_index()
+)
+
+display(department_summary)
+
+plt.figure(figsize=(8,5))
+
+plt.bar(
+    department_summary["Department"],
+    department_summary["Salary"]
+)
+
+plt.xlabel("Department")
+plt.ylabel("Average Salary")
+plt.title("Average Salary by Department")
+
+plt.show()
+
+print("Data cleaning completed successfully.")
+print("Missing values handled.")
+print("Duplicate records removed.")
+print("Automated report generated.")
